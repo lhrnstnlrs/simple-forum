@@ -6,6 +6,7 @@
     "axios": "^0.18.0",
     "node-sass-chokidar": "^1.3.0",
     "npm-run-all": "^4.1.3",
+    "query-string-params": "^1.7.5",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",

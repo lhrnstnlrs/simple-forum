@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Route, Link, Switch } from "react-router-dom";
 
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 
@@ -12,6 +12,7 @@ import { Provider } from 'react-redux';
 
 import Posts from './components/Posts'
 import PostForm from './components/PostForm'
+import PostDetails from './components/PostDetails'
 
 import './css/App.css';
 
@@ -43,16 +44,11 @@ class App extends Component {
     return (
       <Provider store={ store }>
         <div className="App">
-          <ul>
-            <li>
-              <Link to="/posts/create">Add Post</Link>
-            </li>
-          </ul>
-
-          <hr/>
-
-          <Route exact path="/" component={Posts} />
-          <Route path="/posts/create" component={PostForm} />
+          <Switch>
+            <Route exact path="/posts" component={Posts} />
+            <Route exact path="/posts/create" component={PostForm} />
+            <Route path="/posts/:id(\d+)" component={PostDetails} />
+          </Switch>
         </div>
       </Provider>
     );

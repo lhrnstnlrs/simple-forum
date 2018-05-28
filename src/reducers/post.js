@@ -24,7 +24,7 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, activePost: { post: {}, comments: [], error: action.payload } };
 
     case Types.VALIDATE_NEW_POST:
-      return { ...state, newPost: { titleError: action.payload.titleError, descriptionError: action.payload.descriptionError, validated: action.payload.validated } };
+      return { ...state, newPost: { titleError: action.payload.titleError, bodyError: action.payload.bodyError, validated: action.payload.validated } };
 
     case Types.RESET_NEW_POST:
       return { ...state, newPost: INITIAL_STATE.newPost };

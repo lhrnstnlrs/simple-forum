@@ -26,13 +26,13 @@ export function validateNewPost(post) {
     titleError = true;
   }
 
-  let descriptionError = false;
-  if (post.description === '') {
-    descriptionError = true;
+  let bodyError = false;
+  if (post.body === '') {
+    bodyError = true;
   }
 
   let validated = false;
-  if (!(titleError || descriptionError)) {
+  if (!(titleError || bodyError)) {
     validated = true;
   }
 
@@ -40,17 +40,18 @@ export function validateNewPost(post) {
     type: Types.VALIDATE_NEW_POST,
     payload: {
       titleError: titleError,
-      descriptionError: descriptionError,
+      bodyError: bodyError,
       validated: validated
     }
   };
 }
 
-export function createPost(post) {
+export function createPost(post, router) {
   return {
     type: Types.CREATE_POST,
     payload: {
       post: post,
+      router: router
     }
   };
 }

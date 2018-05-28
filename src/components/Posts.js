@@ -4,40 +4,90 @@ import { connect } from 'react-redux';
 import { getPosts } from '../actions/post';
 import { getPostsList } from '../reducers/post';
 
-import { BrowserRouter as Route, Link } from "react-router-dom";
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+
+import { urlToProperty } from "query-string-params";
 
 import PostDetails from './PostDetails'
 
-class Posts extends Component {
-  componentWillMount() {
-    /* fetch('https://jsonplaceholder.typicode.com/posts/')
-      .then(response => response.json())
-      .then(data => this.setState({posts: data})); */
+const PAGE_SIZE = 10;
 
+class Posts extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      currentPage: 1,
+    }
+
+    this.getPostsPerPage = this.getPostsPerPage.bind(this);
+    this.renderPaginationLink = this.renderPaginationLink.bind(this);
+  }
+
+  componentDidMount() {
     this.props.getPosts();
+  }
+
+  componentWillReceiveProps(nextProps){
+    const property = urlToProperty(nextProps.location.search);
+    if(property.page !== undefined && property.page !== this.state.currentPage) {
+      this.setState({
+        currentPage: property.page
+      })
+    }
+  }
+
+  getPostsPerPage(posts) {
+    const start = (this.state.currentPage * PAGE_SIZE) - PAGE_SIZE;
+    const end = (this.state.currentPage * PAGE_SIZE);
+
+    return posts.filter((posts, index) => (index < end && index >= start))
+  }
+
+  renderPaginationLink(page) {
+    return (
+      <li key={page} className={this.state.currentPage === page ? 'active' : ''}>
+        <Link to={`/posts?page=${page}`}>
+          {page}
+        </Link>
+      </li>
+    );
   }
 
   render() {
     const { posts } = this.props.postsList;
 
-    //console.log(posts);
+    const paginationLinks = [];
+    let numberOfPages = posts.length / PAGE_SIZE;
+    if(posts.length % PAGE_SIZE > 0) {
+      numberOfPages += 1;
+    }
+    for (var pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
+      paginationLinks.push(this.renderPaginationLink(pageNumber));
+    }
 
-    const postItems = posts.map(post => (
+    const postsPerPage = this.getPostsPerPage(posts);
+    const postItems = postsPerPage.map(post => (
       <div key={post.id}>
-        <Link to={`/${post.id}`}>{post.title}</Link>
-        <p>{post.body}</p>
+        <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
       </div>
     ));
 
     return (
       <div>
         <h1>Posts</h1>
+        <Link to="/posts/create">Add Post</Link>
+
+        <hr/>
+
         {postItems}
 
-        <Route path="/:id" render={(props) => <PostDetails {...props}/>} />
+        <nav>
+          <ul className="pagination">
+            {paginationLinks}
+          </ul>
+        </nav>
       </div>
-      
     );
   }
 }

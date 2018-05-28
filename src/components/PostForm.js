@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { validateNewPost, createPost, resetNewPost } from '../actions/post';
+import { getNewPost } from '../reducers/post';
 
 import { withRouter } from 'react-router-dom';
 
@@ -29,10 +30,20 @@ class PostForm extends Component {
       body: this.state.body
     }
 
-    this.props.createPost(post);
+    this.props.validateNewPost(post);
   }
   
   render() {
+
+    const { titleError, bodyError, validated } = this.props.newPost;
+
+    if (validated) {
+      const post = {
+        title: this.state.title,
+        body: this.state.body
+      }
+      this.props.createPost(post, this.props.history);
+    }
 
     return (
       <div>
@@ -41,6 +52,9 @@ class PostForm extends Component {
         <form onSubmit={this.onSubmit}>
           <div>
             <label>Title</label>
+            {
+              titleError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Title can't be blank.</p> : null
+            }
             <br/>
             <input
               type='text'
@@ -51,6 +65,9 @@ class PostForm extends Component {
           <br/>
           <div>
             <label>Body</label>
+            {
+              bodyError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Body can't be blank.</p> : null
+            }
             <br/>
             <textarea
               name='body'
@@ -67,7 +84,7 @@ class PostForm extends Component {
 
 function mapStateToProps(state) {
   return {
-    //newPost: getNewPost(state.posts)
+    newPost: getNewPost(state.posts)
   };
 }
 
@@ -76,8 +93,8 @@ function mapDispatchToProps(dispatch) {
     validateNewPost: (post) => {
       dispatch(validateNewPost(post));
     },
-    createPost: (post) => {
-      dispatch(createPost(post));
+    createPost: (post, router) => {
+      dispatch(createPost(post, router));
     },
     resetMe: () => {
       dispatch(resetNewPost());
