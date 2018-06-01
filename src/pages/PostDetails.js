@@ -7,6 +7,7 @@ import { getActivePost } from '../reducers/post';
 import { Route, Link } from "react-router-dom";
 import { withRouter } from 'react-router-dom';
 
+import Navbar from '../components/navbar';
 
 class PostDetails extends Component {
   componentDidMount() {
@@ -16,6 +17,14 @@ class PostDetails extends Component {
   render() {
     const { post, comments, loading, error } = this.props.activePost;
 
+    if (loading) {
+      return (
+        <div>
+          <h1>Loading...</h1>
+        </div>
+      )
+    }
+
     const commentItems = comments.map(comment => (
       <div key={comment.id}>
         <h6>{comment.name}<br/>{comment.email}</h6>
@@ -24,14 +33,23 @@ class PostDetails extends Component {
     ));
 
     return (
-      <div>
-        <h3>{post.title}</h3>
-        <p>{post.body}</p>
-        
-        <h4>Comments</h4>
-        <div>{commentItems}</div>
+      <div className="container-fluid">
+        <Navbar addLinkEnabled />
+
+        <div className="container">
+          <h1>{post.title}</h1>
+        </div>
+
+        <div className="container">
+          <h3>{post.body}</h3>
+        </div>
+
+        <div className="container">
+          <h2>Comments</h2>
+        </div>
+
+        <div className="container">{commentItems}</div>
       </div>
-      
     );
   }
 }

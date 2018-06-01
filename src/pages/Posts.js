@@ -6,9 +6,11 @@ import { getPostsList } from '../reducers/post';
 
 import { Link, withRouter } from 'react-router-dom';
 
-import { urlToProperty } from "query-string-params";
+import { urlToProperty } from 'query-string-params';
 
-import PostDetails from './PostDetails'
+import Navbar from '../components/navbar';
+
+import PostDetails from './PostDetails';
 
 const PAGE_SIZE = 10;
 
@@ -46,7 +48,7 @@ class Posts extends Component {
 
   renderPaginationLink(page) {
     return (
-      <li key={page} className={this.state.currentPage === page ? 'active' : ''}>
+      <li key={page} className={this.state.currentPage == page ? 'active' : ''}>
         <Link to={`/posts?page=${page}`}>
           {page}
         </Link>
@@ -68,25 +70,33 @@ class Posts extends Component {
 
     const postsPerPage = this.getPostsPerPage(posts);
     const postItems = postsPerPage.map(post => (
-      <div key={post.id}>
-        <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
-      </div>
+      
+        <li className="list-group-item" key={post.id}>
+          <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
+        </li>
     ));
 
     return (
-      <div>
-        <h1>Posts</h1>
-        <Link to="/posts/create">Add Post</Link>
+      <div className="container-fluid">
+        <Navbar addLinkEnabled />
 
-        <hr/>
+        <div className="container">
+          <h1>Posts</h1>
+        </div>
 
-        {postItems}
+        <br/>
 
-        <nav>
+        <div className="container">
+          <ul className="list-group">
+            {postItems}
+          </ul>
+        </div>
+
+        <div className="container">
           <ul className="pagination">
             {paginationLinks}
           </ul>
-        </nav>
+        </div>
       </div>
     );
   }

@@ -1,6 +1,11 @@
-.App {
-  width: 60%;
-  margin: auto; }
+textarea {
+  resize: none; }
+
+.list-group {
+  width: 60%; }
+
+.form-group {
+  width: 60%; }
 
 .App-header {
   background-color: #222;

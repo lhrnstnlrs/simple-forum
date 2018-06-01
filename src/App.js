@@ -10,9 +10,9 @@ import createSagaMiddleware from 'redux-saga';
 
 import { Provider } from 'react-redux';
 
-import Posts from './components/Posts'
-import PostForm from './components/PostForm'
-import PostDetails from './components/PostDetails'
+import Posts from './pages/Posts'
+import PostForm from './pages/PostForm'
+import PostDetails from './pages/PostDetails'
 
 import './css/App.css';
 
@@ -43,13 +43,11 @@ class App extends Component {
   render() {
     return (
       <Provider store={ store }>
-        <div className="App">
           <Switch>
             <Route exact path="/posts" component={Posts} />
             <Route exact path="/posts/create" component={PostForm} />
             <Route path="/posts/:id(\d+)" component={PostDetails} />
           </Switch>
-        </div>
       </Provider>
     );
   }

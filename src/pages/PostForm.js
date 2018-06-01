@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { validateNewPost, createPost, resetNewPost } from '../actions/post';
 import { getNewPost } from '../reducers/post';
 
+import Navbar from '../components/navbar';
+
 import { withRouter } from 'react-router-dom';
 
 class PostForm extends Component {
@@ -46,37 +48,49 @@ class PostForm extends Component {
     }
 
     return (
-      <div>
-        <h1>Add Post</h1>
-        
-        <form onSubmit={this.onSubmit}>
-          <div>
-            <label>Title</label>
-            {
-              titleError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Title can't be blank.</p> : null
-            }
-            <br/>
-            <input
-              type='text'
-              name='title'
-              onChange={this.onChange}
-              value={this.state.title} />
-          </div>
-          <br/>
-          <div>
-            <label>Body</label>
-            {
-              bodyError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Body can't be blank.</p> : null
-            }
-            <br/>
-            <textarea
-              name='body'
-              onChange={this.onChange}
-              value={this.state.body}/>
-          </div>
-          <br/>
-          <button type='submit'>Submit</button>
-        </form>
+      <div className="container-fluid center-block">
+        <Navbar/>
+
+        <div className="container">
+          <h1>Add Post</h1>
+        </div>
+
+        <hr/>
+        <br/>
+
+        <div className="container">
+
+        </div>
+
+        <div className="container">
+          <form onSubmit={this.onSubmit}>
+            <div className="form-group">
+              <label for='title'>Title</label>
+              {
+                titleError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Title can't be blank.</p> : null
+              }
+              <input
+                className='form-control'
+                type='text'
+                name='title'
+                onChange={this.onChange}
+                value={this.state.title} />
+            </div>
+            <div className="form-group">
+              <label for='body'>Body</label>
+              {
+                bodyError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Body can't be blank.</p> : null
+              }
+              <textarea
+                className='form-control'
+                rows="5" cols="50"
+                name='body'
+                onChange={this.onChange}
+                value={this.state.body}/>
+            </div>
+            <button type="submit" class="btn btn-default">Create Post</button>
+          </form>
+        </div>
       </div>
     );
   }
