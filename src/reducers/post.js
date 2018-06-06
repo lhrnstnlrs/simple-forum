@@ -3,7 +3,7 @@ import * as Types from '../actions/types';
 const INITIAL_STATE = {
   postsList: { posts: [], error: null },
   activePost: { post: {}, comments: [], loading: false, error: null },
-  newPost: { validated: false }
+  newPost: { loading: false, error: null }
 };
 
 export default function (state = INITIAL_STATE, action) {
@@ -18,16 +18,19 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, activePost: { post: {}, comments: [], loading: true, error: null } };
 
     case Types.GET_POST_DETAILS_SUCCESS:
-      return { ...state, activePost: { post: action.payload.post, comments: action.payload.comments, error: null } };
+      return { ...state, activePost: { post: action.payload.post, comments: action.payload.comments, loading: null, error: null } };
 
     case Types.GET_POST_DETAILS_FAILURE:
-      return { ...state, activePost: { post: {}, comments: [], error: action.payload } };
+      return { ...state, activePost: { post: {}, comments: [], loading: null, error: action.payload } };
 
-    case Types.VALIDATE_NEW_POST:
-      return { ...state, newPost: { titleError: action.payload.titleError, bodyError: action.payload.bodyError, validated: action.payload.validated } };
+    case Types.CREATE_POST:
+      return { ...state, newPost: { loading: true, error: '' } };
 
-    case Types.RESET_NEW_POST:
+    case Types.CREATE_POST_SUCCESS:
       return { ...state, newPost: INITIAL_STATE.newPost };
+
+    case Types.CREATE_POST_FAILURE:
+      return { ...state, newPost: { loading: false, error: action.payload } };
 
     default:
       return state;

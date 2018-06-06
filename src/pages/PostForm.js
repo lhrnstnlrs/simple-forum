@@ -1,95 +1,107 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { validateNewPost, createPost, resetNewPost } from '../actions/post';
+import { createPost } from '../actions/post';
 import { getNewPost } from '../reducers/post';
 
-import Navbar from '../components/navbar';
+import { Link, withRouter } from 'react-router';
 
-import { withRouter } from 'react-router-dom';
+import { Form, Field, Errors, actions } from 'react-redux-form';
+
+import Navbar from '../components/navbar';
+import { Dots } from 'react-activity';
+import '../css/app.css';
+
 
 class PostForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      title: '',
-      body: '',
-    };
-
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    this._onSubmit = this._onSubmit.bind(this);
   }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value })
+  componentWillUnmount() {
+    this.props.reset();
   }
 
-  onSubmit(e) {
-    e.preventDefault();
-
-    const post = {
-      title: this.state.title,
-      body: this.state.body
-    }
-
-    this.props.validateNewPost(post);
+  _onSubmit(post) {
+    this.props.createPost(post);
   }
   
   render() {
-
-    const { titleError, bodyError, validated } = this.props.newPost;
-
-    if (validated) {
-      const post = {
-        title: this.state.title,
-        body: this.state.body
-      }
-      this.props.createPost(post, this.props.history);
-    }
+    const { loading, error } = this.props.newPost;
+    
+    const isRequired = (val) => val && val.length > 0;
 
     return (
-      <div className="container-fluid center-block">
+      <div>
         <Navbar/>
 
         <div className="container">
-          <h1>Add Post</h1>
-        </div>
+          <div className="row mt-4">
+            <Link to="/posts"><u>&lt;&lt; Back to list</u></Link>
+          </div>
 
-        <hr/>
-        <br/>
-
-        <div className="container">
-
-        </div>
-
-        <div className="container">
-          <form onSubmit={this.onSubmit}>
-            <div className="form-group">
-              <label for='title'>Title</label>
-              {
-                titleError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Title can't be blank.</p> : null
+          <div className="container">
+              {loading &&
+                <div className="d-flex justify-content-center mt-3">
+                  <Dots />
+                </div>
               }
-              <input
-                className='form-control'
-                type='text'
-                name='title'
-                onChange={this.onChange}
-                value={this.state.title} />
-            </div>
-            <div className="form-group">
-              <label for='body'>Body</label>
-              {
-                bodyError ? <p style={{ fontSize: 12, color: 'red', textAlign: 'left' }}>Body can't be blank.</p> : null
+
+              {error &&
+                <div className="d-flex justify-content-center mt-3">
+                  <p className="text-danger">{error}</p>
+                </div>
               }
-              <textarea
-                className='form-control'
-                rows="5" cols="50"
-                name='body'
-                onChange={this.onChange}
-                value={this.state.body}/>
-            </div>
-            <button type="submit" class="btn btn-default">Create Post</button>
-          </form>
+          </div>
+
+          <div className="row mt-4">
+            <h1>Create Post</h1>
+          </div>
+
+          <div className="container">
+            <Form model="newPost" onSubmit={(newPost) => this._onSubmit(newPost)} >
+              <Field
+                  model="newPost.title"
+                  validators={{ isRequired }}>
+                <div className="form-group w-50">
+                  <label>Title</label>
+                  <Errors
+                      wrapper={(props) => <p className="text-danger">{props.children}</p>}
+                      show={{ touched: true, focus: false }}
+                      model="newPost.title"
+                      messages={{
+                        isRequired: 'Please provide a title.',
+                      }}
+                  />
+                  <input
+                    className='form-control'
+                    type='text' />
+                </div>
+              </Field>
+
+              <Field
+                  model="newPost.body"
+                  validators={{ isRequired }}>
+                <div className="form-group w-50">
+                  <label>Body</label>
+                  <Errors
+                      wrapper={(props) => <p className="text-danger">{props.children}</p>}
+                      show={{ touched: true, focus: false }}
+                      model="newPost.body"
+                      messages={{
+                        isRequired: 'Please provide a body.',
+                      }}
+                  />
+                  <textarea
+                    className='form-control noresize'
+                    rows="8" />
+                </div>
+              </Field>
+
+              <button type="submit" className="btn btn-primary">Create Post!</button>
+            </Form>
+          </div>
         </div>
       </div>
     );
@@ -98,20 +110,17 @@ class PostForm extends Component {
 
 function mapStateToProps(state) {
   return {
-    newPost: getNewPost(state.posts)
+    newPost: getNewPost(state.post)
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    validateNewPost: (post) => {
-      dispatch(validateNewPost(post));
-    },
     createPost: (post, router) => {
       dispatch(createPost(post, router));
     },
-    resetMe: () => {
-      dispatch(resetNewPost());
+    reset: () => {
+      dispatch(actions.reset('newPost'));
     },
   }
 }

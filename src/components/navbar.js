@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import '../css/navbar.css';
 
 class Navbar extends Component {
   render() {
     return (
-      <nav className="navbar navbar-inverse navbar-fixed-top">
+      <nav className="navbar navbar-inverse navbar-fixed-top navbar-dark bg-dark w-100">
         <div className="container">
           <div className="navbar-header">
             <h1 className="navbar-brand">Simple Forum</h1>
@@ -14,7 +14,7 @@ class Navbar extends Component {
           { this.props.addLinkEnabled &&
             <ul className="nav navbar-nav navbar-right">
               <li>
-                <Link to="/posts/create" className="nav-link">
+                <Link to="/create" className="nav-link">
                   <button type="button" className="btn navbar-btn btn-secondary">
                     Add Post
                   </button>

@@ -20,45 +20,26 @@ export function getPostsFailure(error) {
   };
 }
 
-export function validateNewPost(post) {
-  let titleError = false;
-  if (post.title === '') {
-    titleError = true;
-  }
-
-  let bodyError = false;
-  if (post.body === '') {
-    bodyError = true;
-  }
-
-  let validated = false;
-  if (!(titleError || bodyError)) {
-    validated = true;
-  }
-
-  return {
-    type: Types.VALIDATE_NEW_POST,
-    payload: {
-      titleError: titleError,
-      bodyError: bodyError,
-      validated: validated
-    }
-  };
-}
-
-export function createPost(post, router) {
+export function createPost(post, dispatch) {
   return {
     type: Types.CREATE_POST,
     payload: {
       post: post,
-      router: router
+      dispatch: dispatch
     }
   };
 }
 
-export function resetNewPost() {
+export function createPostSuccess() {
   return {
-    type: Types.RESET_NEW_POST,
+    type: Types.CREATE_POST_SUCCESS,
+  };
+}
+
+export function createPostFailure(error) {
+  return {
+    type: Types.CREATE_POST_FAILURE,
+    payload: error
   };
 }
 

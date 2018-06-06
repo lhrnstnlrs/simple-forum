@@ -4,15 +4,14 @@ import { connect } from 'react-redux';
 import { getPosts } from '../actions/post';
 import { getPostsList } from '../reducers/post';
 
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router';
 
 import { urlToProperty } from 'query-string-params';
 
 import Navbar from '../components/navbar';
 
-import PostDetails from './PostDetails';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
 
 class Posts extends Component {
   constructor(props) {
@@ -23,6 +22,8 @@ class Posts extends Component {
     }
 
     this.getPostsPerPage = this.getPostsPerPage.bind(this);
+    this.renderPreviousPagination = this.renderPreviousPagination.bind(this);
+    this.renderNextPagination = this.renderNextPagination.bind(this);
     this.renderPaginationLink = this.renderPaginationLink.bind(this);
   }
 
@@ -34,7 +35,7 @@ class Posts extends Component {
     const property = urlToProperty(nextProps.location.search);
     if(property.page !== undefined && property.page !== this.state.currentPage) {
       this.setState({
-        currentPage: property.page
+        currentPage: Number(property.page)
       })
     }
   }
@@ -46,10 +47,22 @@ class Posts extends Component {
     return posts.filter((posts, index) => (index < end && index >= start))
   }
 
+  renderPreviousPagination() {
+    return (
+      <li className={this.state.currentPage === 1 ? "page-item disabled" : "page-item"}><Link to={`/posts?page=${this.state.currentPage-1}`} className="page-link">Previous</Link></li>
+    )
+  }
+
+  renderNextPagination(numberOfPages) {
+    return (
+      <li className={this.state.currentPage === numberOfPages ? "page-item disabled" : "page-item"}><Link to={`/posts?page=${this.state.currentPage+1}`} className="page-link">Next</Link></li>
+    )
+  }
+
   renderPaginationLink(page) {
     return (
-      <li key={page} className={this.state.currentPage == page ? 'active' : ''}>
-        <Link to={`/posts?page=${page}`}>
+      <li key={page} className={this.state.currentPage === page ? "page-item active" : "page-item"}>
+        <Link to={`/posts?page=${page}`} className="page-link">
           {page}
         </Link>
       </li>
@@ -58,44 +71,47 @@ class Posts extends Component {
 
   render() {
     const { posts } = this.props.postsList;
-
-    const paginationLinks = [];
-    let numberOfPages = posts.length / PAGE_SIZE;
+    const postsSize = posts.length;
+    
+    let numberOfPages = Math.floor(postsSize / PAGE_SIZE);
     if(posts.length % PAGE_SIZE > 0) {
       numberOfPages += 1;
     }
+
+    const paginationLinks = [];
     for (var pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
       paginationLinks.push(this.renderPaginationLink(pageNumber));
     }
 
     const postsPerPage = this.getPostsPerPage(posts);
-    const postItems = postsPerPage.map(post => (
-      
-        <li className="list-group-item" key={post.id}>
-          <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
+    const postItems = postsPerPage.map(post => (   
+        <li key={post.id} className="list-group-item">
+          <h5><Link to={`/post/${post.id}`}>{post.title}</Link></h5>
         </li>
     ));
 
     return (
-      <div className="container-fluid">
+      <div>
         <Navbar addLinkEnabled />
 
         <div className="container">
-          <h1>Posts</h1>
-        </div>
+          <div className="row mt-4">
+            <h1>Posts</h1>
+          </div>
 
-        <br/>
+          <div className="row mt-4">
+            <ul className="list-group w-75">
+              {postItems}
+            </ul>
+          </div>
 
-        <div className="container">
-          <ul className="list-group">
-            {postItems}
-          </ul>
-        </div>
-
-        <div className="container">
-          <ul className="pagination">
-            {paginationLinks}
-          </ul>
+          <div className="row mt-5">
+            <ul className="pagination">
+              {this.renderPreviousPagination()}
+              {paginationLinks}
+              {this.renderNextPagination(numberOfPages)}
+            </ul>
+          </div>
         </div>
       </div>
     );
@@ -104,7 +120,7 @@ class Posts extends Component {
 
 function mapStateToProps(state) {
 	return {
-		postsList: getPostsList(state.posts)
+		postsList: getPostsList(state.post)
 	};
 }
 

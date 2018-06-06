@@ -2,8 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios'
 import * as Types from '../actions/types';
 import * as Action from '../actions/post';
-
-import { Redirect } from 'react-router-dom';
+import { browserHistory } from 'react-router'
 
 const ROOT_URL = 'https://jsonplaceholder.typicode.com/'
 
@@ -32,12 +31,12 @@ function* getPostDetailsAsync(action) {
 
 function* createPostAsync(action) {
   try {
-    const response = yield call(axios.post, ROOT_URL + 'posts', { title: action.payload.post.title, body: action.payload.post.body, userId: 1 });
-
-    yield call(action.payload.router.push('/posts'));
-    //yield put({ type: Types.RESET_NEW_POST });
+    yield call(axios.post, ROOT_URL + 'posts', { title: action.payload.post.title, body: action.payload.post.body, userId: 1 });
+    yield put(Action.createPostSuccess());
+    
+    browserHistory.push('/posts')
   } catch (error) {
-    console.log('Error in creating post: ' + error);
+    yield put(Action.createPostFailure(error));
   }
 }
 
